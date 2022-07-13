@@ -1,11 +1,13 @@
 <script>
+import { codes } from '../utils/filtersCodes';
+
 let inputText = '';
 let list = [
-  { id: 1, isFinished: false, text: 'Do Washing' },
-  { id: 2, isFinished: true, text: 'Do Dish' },
-  { id: 3, isFinished: false, text: 'Do Cleaning' },
-  { id: 4, isFinished: true, text: 'Learn Go' },
-  { id: 5, isFinished: true, text: 'Learn Rust' },
+  { id: 1, isFinished: false, text: 'Do Washing', code: 'AAA' },
+  { id: 2, isFinished: true, text: 'Do Dish', code: 'BBB' },
+  { id: 3, isFinished: false, text: 'Do Cleaning', code: 'CCC' },
+  { id: 4, isFinished: true, text: 'Learn Go', code: 'DDD' },
+  { id: 5, isFinished: true, text: 'Learn Rust', code: 'EEE' },
 ];
 // 'ALL' | 'FINISHED' | 'UNFINISHED'
 let filter = 'ALL';
@@ -25,6 +27,7 @@ const addTodo = (text) => {
       text,
       id: Date.now(),
       isFinished: false,
+      code: 'AAA',
     },
     ...list,
   ];
@@ -83,7 +86,7 @@ const removeTodo = (todo, index) => {
       />
       <p
         class="mb-0 me-auto {todo.isFinished ? 'text-decoration-line-through' : ''}"
-      >{ todo.text }</p>
+      >{ todo.text } <small>({ codes(todo.code) })</small></p>
       <button
         class="btn btn-danger btn-sm"
         on:click={() => removeTodo(todo, index)}
