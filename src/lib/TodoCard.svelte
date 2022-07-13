@@ -1,71 +1,47 @@
 <script>
-// import { ref, reactive } from 'vue';
+let inputText = '';
+let list = [
+  { id: 1, isFinished: false, text: 'Do Washing' },
+  { id: 2, isFinished: true, text: 'Do Dish' },
+  { id: 3, isFinished: false, text: 'Do Cleaning' },
+  { id: 4, isFinished: true, text: 'Learn Go' },
+  { id: 5, isFinished: true, text: 'Learn Rust' },
+];
+// 'ALL' | 'FINISHED' | 'UNFINISHED'
+let filter = 'ALL';
 
-let text = '';
-const todos = {
-  list: [
-    { id: 1, isFinished: false, text: 'Do Washing' },
-    { id: 2, isFinished: true, text: 'Do Dish' },
-    { id: 3, isFinished: false, text: 'Do Cleaning' },
-    { id: 4, isFinished: true, text: 'Learn Go' },
-    { id: 5, isFinished: true, text: 'Learn Rust' },
-  ],
-  // 'ALL' | 'FINISHED' | 'UNFINISHED'
-  filter: 'ALL',
+$: finishedTodos = list.filter(todo => todo.isFinished);
+$: unfinishtedTodos = list.filter(todo => !todo.isFinished);
+$: filteredTodos = (filter === 'FINISHED' ? finishedTodos : (filter === 'UNFINISHED' ? unfinishtedTodos : list));
+
+const handleSubmit = () => {
+  addTodo(inputText);
+  inputText = ''
 };
 
-const handleInput = (e) => {
-  text = e.target.value;
+const addTodo = (text) => {
+  const todo = {
+    text,
+    id: Date.now(),
+    isFinished: false,
+  };
+  list = [ ...list, todo ];
 };
 
-const finishedTodos = () => {
-  return todos.list.filter(todo => todo.isFinished);
+const setFilter = (value) => {
+  filter = value;
 };
 
-const unfinishedTodos = () => {
-  return todos.list.filter(todo => !todo.isFinished);
-};
-
-const filteredTodos = () => {
-  const { filter, list } = todos;
-  if (filter === 'FINISHED') {
-    return finishedTodos();
-  } else if (filter === 'UNFINISHED') {
-    return unfinishedTodos();
-  }
-  return list;
-};
-
-$: filtered = filteredTodos();
-
-const addTodo = () => {
-  const { list } = todos;
-  list.push({ text, id: Date.now(), isFinished: false });
-  text = '';
-};
-
-const setFilter = (filter) => {
-  todos.filter = filter;
-};
-
-const toggleTodo = (id) => {
-  const { list } = todos;
-  const index = list.findIndex(todo => todo.id === id);
-  const todo = list[index];
-  todos.list = [
+const toggleTodo = (todo, index) => {
+  list = [
     ...list.slice(0, index),
-    {
-      ...todo,
-      isFinished: !todo.isFinished,
-    },
+    { ...todo, isFinished: !todo.isFinished },
     ...list.slice(index + 1),
   ];
 };
 
-const removeTodo = (id) => {
-  const { list } = todos;
-  const index = list.findIndex(todo => todo.id === id);
-  todos.list = [
+const removeTodo = (todo, index) => {
+  list = [
     ...list.slice(0, index),
     ...list.slice(index + 1),
   ];
@@ -74,14 +50,13 @@ const removeTodo = (id) => {
 
 <div class="card">
   <div class="card-header">
-    <form class="d-flex" role="search" on:submit|preventDefault={addTodo}>
+    <form class="d-flex" role="search" on:submit|preventDefault={handleSubmit}>
       <input
         class="form-control me-2"
         type="search"
         placeholder="enter todo"
         aria-label="Enter todo"
-        value={text}
-        on:input={handleInput}
+        bind:value={inputText}
       />
       <button
         class="btn btn-outline-success"
@@ -90,7 +65,7 @@ const removeTodo = (id) => {
     </form>
   </div>
   <ul class="list-group list-group-flush">
-    {#each item as filtered}
+    {#each filteredTodos as todo, index}
     <li
       class="list-group-item d-flex justify-content-between align-items-center"
     >
@@ -98,38 +73,38 @@ const removeTodo = (id) => {
         class="form-check-input mt-0 me-2"
         type="checkbox"
         aria-label="..."
-        bind:checked={item.isFinished}
-        on:change={toggleTodo(item.id)}
+        checked={todo.isFinished}
+        on:change={() => toggleTodo(todo, index)}
       />
       <p
-        class="mb-0 me-auto"
-        class:={isFinished ? 'text-decoration-line-through' : ''}
-      >{ item.text }</p>
+        class="mb-0 me-auto {todo.isFinished ? 'text-decoration-line-through' : ''}"
+      >{ todo.text }</p>
       <button
         class="btn btn-danger btn-sm"
-        @click="removeTodo(id)"
+        on:click={() => removeTodo(todo, index)}
       >Del</button>
     </li>
+    {/each}
   </ul>
   <div class="card-footer">
     <div class="btn-group" role="group" aria-label="Basic outlined example">
       <button
         type="button"
         class="btn btn-outline-primary"
-        :class="{active: todos.filter === 'ALL'}"
-        @click="setFilter('ALL')"
+        class:active={filter === 'ALL'}
+        on:click={() => setFilter('ALL')}
       >All</button>
       <button
         type="button"
         class="btn btn-outline-primary"
-        :class="{active: todos.filter === 'FINISHED'}"
-        @click="setFilter('FINISHED')"
+        class:active={filter === 'FINISHED'}
+        on:click={() => setFilter('FINISHED')}
       >Finished</button>
       <button
         type="button"
         class="btn btn-outline-primary"
-        :class="{active: todos.filter === 'UNFINISHED'}"
-        @click="setFilter('UNFINISHED')"
+        class:active={filter === 'UNFINISHED'}
+        on:click={() => setFilter('UNFINISHED')}
       >Unfinished</button>
     </div>
   </div>
