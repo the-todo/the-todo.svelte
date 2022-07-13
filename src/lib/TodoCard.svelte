@@ -1,7 +1,7 @@
 <script>
 import { codes } from '../utils/filtersCodes';
+import TodoForm from './TodoForm.svelte';
 
-let inputText = '';
 let list = [
   { id: 1, isFinished: false, text: 'Do Washing', code: 'AAA' },
   { id: 2, isFinished: true, text: 'Do Dish', code: 'BBB' },
@@ -16,15 +16,10 @@ $: finishedTodos = list.filter(todo => todo.isFinished);
 $: unfinishtedTodos = list.filter(todo => !todo.isFinished);
 $: filteredTodos = (filter === 'FINISHED' ? finishedTodos : (filter === 'UNFINISHED' ? unfinishtedTodos : list));
 
-const handleSubmit = () => {
-  addTodo(inputText);
-  inputText = '';
-};
-
-const addTodo = (text) => {
+const addTodo = (event) => {
   list = [
     {
-      text,
+      text: event.detail,
       id: Date.now(),
       isFinished: false,
       code: 'AAA',
@@ -58,23 +53,9 @@ const removeTodo = (todo, index) => {
 
 <div class="card">
   <div class="card-header">
-    <form
-      class="d-flex"
-      role="search"
-      on:submit|preventDefault={handleSubmit}
-    >
-      <input
-        class="form-control me-2"
-        type="search"
-        placeholder="enter todo"
-        aria-label="Enter todo"
-        bind:value={inputText}
-      />
-      <button
-        class="btn btn-outline-success"
-        type="submit"
-      >Add</button>
-    </form>
+    <TodoForm
+      on:submit-form={addTodo}
+    />
   </div>
   <ul class="list-group list-group-flush">
     {#each filteredTodos as todo, index}
