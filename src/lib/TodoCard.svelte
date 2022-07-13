@@ -16,16 +16,18 @@ $: filteredTodos = (filter === 'FINISHED' ? finishedTodos : (filter === 'UNFINIS
 
 const handleSubmit = () => {
   addTodo(inputText);
-  inputText = ''
+  inputText = '';
 };
 
 const addTodo = (text) => {
-  const todo = {
-    text,
-    id: Date.now(),
-    isFinished: false,
-  };
-  list = [ ...list, todo ];
+  list = [
+    {
+      text,
+      id: Date.now(),
+      isFinished: false,
+    },
+    ...list,
+  ];
 };
 
 const setFilter = (value) => {
@@ -35,7 +37,10 @@ const setFilter = (value) => {
 const toggleTodo = (todo, index) => {
   list = [
     ...list.slice(0, index),
-    { ...todo, isFinished: !todo.isFinished },
+    {
+      ...todo,
+      isFinished: !todo.isFinished,
+    },
     ...list.slice(index + 1),
   ];
 };
