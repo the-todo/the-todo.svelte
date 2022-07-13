@@ -58,7 +58,11 @@ const removeTodo = (todo, index) => {
 
 <div class="card">
   <div class="card-header">
-    <form class="d-flex" role="search" on:submit|preventDefault={handleSubmit}>
+    <form
+      class="d-flex"
+      role="search"
+      on:submit|preventDefault={handleSubmit}
+    >
       <input
         class="form-control me-2"
         type="search"
@@ -74,9 +78,7 @@ const removeTodo = (todo, index) => {
   </div>
   <ul class="list-group list-group-flush">
     {#each filteredTodos as todo, index}
-    <li
-      class="list-group-item d-flex justify-content-between align-items-center"
-    >
+    <li class="list-group-item d-flex justify-content-between align-items-center">
       <input
         class="form-check-input mt-0 me-2"
         type="checkbox"
@@ -85,7 +87,8 @@ const removeTodo = (todo, index) => {
         on:change={() => toggleTodo(todo, index)}
       />
       <p
-        class="mb-0 me-auto {todo.isFinished ? 'text-decoration-line-through' : ''}"
+        class="mb-0 me-auto"
+        class:text-decoration-line-through={todo.isFinished}
       >{ todo.text } <small>({ codes(todo.code) })</small></p>
       <button
         class="btn btn-danger btn-sm"
