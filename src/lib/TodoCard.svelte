@@ -58,6 +58,11 @@ const removeTodo = (todo, index) => {
     />
   </div>
   <ul class="list-group list-group-flush">
+    {#if filteredTodos.length === 0}
+      <li
+        class="list-group-item"
+      >There is Nothing...</li>
+    {/if}
     {#each filteredTodos as todo, index}
     <li class="list-group-item d-flex justify-content-between align-items-center">
       <input
