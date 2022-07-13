@@ -1,6 +1,7 @@
 <script>
 import { codes } from '../utils/filtersCodes';
 import TodoForm from './TodoForm.svelte';
+import TodoFilter from './TodoFilter.svelte';
 
 let list = [
   { id: 1, isFinished: false, text: 'Do Washing', code: 'AAA' },
@@ -16,10 +17,10 @@ $: finishedTodos = list.filter(todo => todo.isFinished);
 $: unfinishtedTodos = list.filter(todo => !todo.isFinished);
 $: filteredTodos = (filter === 'FINISHED' ? finishedTodos : (filter === 'UNFINISHED' ? unfinishtedTodos : list));
 
-const addTodo = (event) => {
+const addTodo = (text) => {
   list = [
     {
-      text: event.detail,
+      text,
       id: Date.now(),
       isFinished: false,
       code: 'AAA',
@@ -54,7 +55,7 @@ const removeTodo = (todo, index) => {
 <div class="card">
   <div class="card-header">
     <TodoForm
-      on:submit-form={addTodo}
+      on:submit-form={(event) => addTodo(event.detail)}
     />
   </div>
   <ul class="list-group list-group-flush">
@@ -84,7 +85,7 @@ const removeTodo = (todo, index) => {
     {/each}
   </ul>
   <div class="card-footer">
-    <div class="btn-group" role="group" aria-label="Basic outlined example">
+    <!-- <div class="btn-group" role="group" aria-label="Basic outlined example">
       <button
         type="button"
         class="btn btn-outline-primary"
@@ -103,6 +104,10 @@ const removeTodo = (todo, index) => {
         class:active={filter === 'UNFINISHED'}
         on:click={() => setFilter('UNFINISHED')}
       >Unfinished</button>
-    </div>
+    </div> -->
+    <TodoFilter
+      filter={filter}
+      on:set-filter={(event) => setFilter(event.detail)}
+    />
   </div>
 </div>
